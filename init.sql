@@ -1,3 +1,5 @@
+-- Execute this command to create the database and table
+
 -- Create the pgvector extension
 CREATE EXTENSION IF NOT EXISTS vector;
 

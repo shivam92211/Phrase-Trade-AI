@@ -1,11 +1,20 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  db:
-    build: .
-    container_name: vec_postgres
+  postgres:
+    build:
+      context: . # Path to your Dockerfile
+      dockerfile: Dockerfile # Name of the Dockerfile
+    container_name: pt_vec_db
+    ports:
+      - "5430:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: great
+      POSTGRES_PASSWORD: good
       POSTGRES_DB: vector_db
-    ports:
-      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
+    driver: local
