@@ -28,14 +28,19 @@ async def startup_event():
         CREATE TABLE IF NOT EXISTS new_embedding (
             id SERIAL PRIMARY KEY,
             phrase VARCHAR(521) NOT NULL,
+            hash VARCHAR(64) NOT NULL,
             embedding VECTOR(768)  --Adjust the dimension as needed
         );    
+        
+        -- Create an index on the hash column
+        CREATE INDEX idx_hash ON new_embedding(hash);
     """
     cursor.execute(sql_query)
     connection.commit()
     cursor.close()
+    connection.close()
 
-    print("Starting up")
+    print("Starting up...")
 
 
 app.include_router(add_sentence_router, tags=["add-sentence"])
