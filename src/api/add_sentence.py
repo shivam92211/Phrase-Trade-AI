@@ -75,7 +75,7 @@ async def check_sentence(input_sentence: SentenceInput):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.delete(
+@router.post(
     "/delete-sentence/",
     status_code=status.HTTP_200_OK,
     description="""

@@ -27,13 +27,13 @@ async def startup_event():
         -- Create table with columns for phrase and embedding
         CREATE TABLE IF NOT EXISTS new_embedding (
             id SERIAL PRIMARY KEY,
-            phrase VARCHAR(521) NOT NULL,
+            phrase VARCHAR(512) NOT NULL,
             hash VARCHAR(64) NOT NULL,
             embedding VECTOR(768)  --Adjust the dimension as needed
         );    
         
         -- Create an index on the hash column
-        CREATE INDEX idx_hash ON new_embedding(hash);
+        CREATE INDEX IF NOT EXISTS idx_hash ON new_embedding(hash);
     """
     cursor.execute(sql_query)
     connection.commit()
