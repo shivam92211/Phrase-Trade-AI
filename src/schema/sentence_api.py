@@ -13,3 +13,9 @@ class SentenceInput(BaseModel):
 
 class HashInput(BaseModel):
     hash: str
+
+
+class PhraseData(BaseModel):
+    title: str
+    body: str
+    author: str

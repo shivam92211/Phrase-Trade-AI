@@ -1,9 +1,9 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Request
 from fastapi import HTTPException
 from schema.sentence_api import HashInput, SentenceInput, SentenceHashInput
 from service.embeddings import add_sentence, remove_sentence, sentence_exists
 from genai.gemini import genai_model
-
+from service.rate_limiter import pt_limiter
 
 router = APIRouter()
 
@@ -19,7 +19,8 @@ router = APIRouter()
     - Use this market id to buy a share
     """,
 )
-async def process_sentence(input_sentence: SentenceHashInput):
+@pt_limiter.limit("25/minute")
+async def process_sentence(request: Request, input_sentence: SentenceHashInput):
     sentence = input_sentence.sentence
     hash = input_sentence.hash
 
@@ -54,7 +55,8 @@ async def process_sentence(input_sentence: SentenceHashInput):
     - This checks into the vector database if a sentence exists
     """,
 )
-async def check_sentence(input_sentence: SentenceInput):
+@pt_limiter.limit("25/minute")
+async def check_sentence(request: Request, input_sentence: SentenceInput):
     sentence = input_sentence.sentence
 
     try:
@@ -83,7 +85,8 @@ async def check_sentence(input_sentence: SentenceInput):
     - This deletes a sentence from the vector database
     """,
 )
-async def delete_sentence(input_sentence: HashInput):
+@pt_limiter.limit("100/minute")
+async def delete_sentence(request: Request, input_sentence: HashInput):
     hash = input_sentence.hash
 
     try:
