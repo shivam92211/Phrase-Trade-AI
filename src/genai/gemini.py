@@ -10,7 +10,10 @@ if not env.GOOGLE_API_KEY:
 genai.configure(api_key=env.GOOGLE_API_KEY)
 
 # Initialize GoogleGenerativeAIEmbedding
-genai_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+# 1500 requests per minute (Free tier)
+genai_model = GoogleGenerativeAIEmbeddings(
+    model="models/embedding-001"
+)  # text embedding model
 
 generation_config = {
     "temperature": 0.3,
@@ -18,4 +21,5 @@ generation_config = {
     "top_k": 1,
     "max_output_tokens": 30,
 }
-mood_model = genai.GenerativeModel("gemini-1.5-flash")
+# 15 rpm (Free tier)
+mood_model = genai.GenerativeModel("gemini-1.5-flash")  # text generation model

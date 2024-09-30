@@ -19,7 +19,7 @@ router = APIRouter()
     - Use this market id to buy a share
     """,
 )
-@pt_limiter.limit("25/minute")
+@pt_limiter.limit("500/minute")
 async def process_sentence(request: Request, input_sentence: SentenceHashInput):
     sentence = input_sentence.sentence
     hash = input_sentence.hash
@@ -55,7 +55,7 @@ async def process_sentence(request: Request, input_sentence: SentenceHashInput):
     - This checks into the vector database if a sentence exists
     """,
 )
-@pt_limiter.limit("25/minute")
+@pt_limiter.limit("800/minute")
 async def check_sentence(request: Request, input_sentence: SentenceInput):
     sentence = input_sentence.sentence
 
@@ -85,7 +85,7 @@ async def check_sentence(request: Request, input_sentence: SentenceInput):
     - This deletes a sentence from the vector database
     """,
 )
-@pt_limiter.limit("100/minute")
+@pt_limiter.limit("200/minute")
 async def delete_sentence(request: Request, input_sentence: HashInput):
     hash = input_sentence.hash
 
