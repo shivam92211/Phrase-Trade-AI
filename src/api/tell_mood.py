@@ -1,15 +1,21 @@
 import json
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from src.schema.sentence_api import PhraseData
 from src.genai.gemini import mood_model
-from src.service.rate_limiter import pt_limiter
+from src.service.rate_limiter import IPRateLimiter
 
 router = APIRouter()
 
+# Create an instance of the rate limiter class (10 requests per 1 minute)
+mood_limiter = IPRateLimiter(rate_limit=1, minutes=1)
+
 
 @router.post("/phrase/")
-@pt_limiter.limit("15/minute")
-def analyze_phrase(request: Request, phrase_data: PhraseData):
+def analyze_phrase(
+    request: Request,
+    phrase_data: PhraseData,
+    _: None = Depends(mood_limiter.check_rate_limit),
+):
     """
     Analyzes the given phrase and returns a motivating reaction along with a mood.
 
@@ -19,6 +25,7 @@ def analyze_phrase(request: Request, phrase_data: PhraseData):
     Returns:
         dict: A dictionary containing the reaction and mood.
     """
+
     title = phrase_data.title
     body = phrase_data.body
     author = phrase_data.author

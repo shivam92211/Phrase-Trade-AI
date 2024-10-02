@@ -1,9 +1,11 @@
-from fastapi import APIRouter, status, Request
+from fastapi import APIRouter, Depends, status, Request
 from fastapi import HTTPException
 from schema.sentence_api import HashInput, SentenceInput, SentenceHashInput
 from service.embeddings import add_sentence, remove_sentence, sentence_exists
 from genai.gemini import genai_model
-from service.rate_limiter import pt_limiter
+from service.rate_limiter import IPRateLimiter
+from src.service.authorization import verify_bearer
+
 
 router = APIRouter()
 
@@ -19,10 +21,17 @@ router = APIRouter()
     - Use this market id to buy a share
     """,
 )
-@pt_limiter.limit("500/minute")
-async def process_sentence(request: Request, input_sentence: SentenceHashInput):
+async def process_sentence(
+    request: Request,
+    input_sentence: SentenceHashInput,
+    verified=Depends(verify_bearer),
+):
     sentence = input_sentence.sentence
     hash = input_sentence.hash
+
+    # if not verified or required don't existsl
+    if not verified or not sentence or not hash:
+        return {"error": "Not allowed!"}
 
     try:
         # Check if the sentence already exists with a distance less than 0.1
@@ -46,6 +55,11 @@ async def process_sentence(request: Request, input_sentence: SentenceHashInput):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
+# Create an instance of the rate limiter class (10 requests per 1 minute)
+check_sentence_limiter = IPRateLimiter(rate_limit=10, minutes=1)
+
+
+# This api is for public hance appliy limiter
 # API route to handle the sentence input
 @router.post(
     "/check-sentence/",
@@ -55,8 +69,11 @@ async def process_sentence(request: Request, input_sentence: SentenceHashInput):
     - This checks into the vector database if a sentence exists
     """,
 )
-@pt_limiter.limit("800/minute")
-async def check_sentence(request: Request, input_sentence: SentenceInput):
+async def check_sentence(
+    request: Request,
+    input_sentence: SentenceInput,
+    _: None = Depends(check_sentence_limiter.check_rate_limit),
+):
     sentence = input_sentence.sentence
 
     try:
@@ -85,9 +102,16 @@ async def check_sentence(request: Request, input_sentence: SentenceInput):
     - This deletes a sentence from the vector database
     """,
 )
-@pt_limiter.limit("200/minute")
-async def delete_sentence(request: Request, input_sentence: HashInput):
+async def delete_sentence(
+    request: Request,
+    input_sentence: HashInput,
+    verified=Depends(verify_bearer),
+):
     hash = input_sentence.hash
+
+    # if not verified or required don't existsl
+    if not verified or not hash:
+        return {"error": "Not allowed!"}
 
     try:
         remove_sentence(hash)

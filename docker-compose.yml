@@ -4,7 +4,7 @@ services:
   postgres:
     build:
       context: . # Path to your Dockerfile
-      dockerfile: Dockerfile # Name of the Dockerfile
+      dockerfile: _Dockerfile # Name of the Dockerfile
     container_name: pt_vec_db
     ports:
       - "5430:5432"

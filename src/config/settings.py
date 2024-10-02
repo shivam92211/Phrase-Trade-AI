@@ -8,7 +8,7 @@ class Settings(BaseSettings):
         env = os.environ.get("API_ENV")
         if env:
             print("Enviroment Loaded =>> ", env)
-        env_file = ".env" if env == "production" else ".env.development"
+        env_file = ".env.production" if env == "production" else ".env.development"
         # Load environment variables
         load_dotenv(dotenv_path=env_file)
 
@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_PORT: str
     POSTGRES_HOST: str
+
+    ALLOWED_ORIGINS: list[str]
+    AI_BEARER_TOKEN: str
 
     @property
     def POSTGRES_URL(self):
