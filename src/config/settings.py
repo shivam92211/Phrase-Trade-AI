@@ -16,11 +16,11 @@ class Settings(BaseSettings):
     API_ENV: str
 
     GOOGLE_API_KEY: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    POSTGRES_PORT: str
-    POSTGRES_HOST: str
+    PG_VECTOR_DB_USER: str
+    PG_VECTOR_DB_PASSWORD: str
+    PG_VECTOR_DB: str
+    PG_VECTOR_DB_PORT: str
+    PG_VECTOR_DB_HOST: str
 
     ALLOWED_ORIGINS: list[str]
     AI_BEARER_TOKEN: str

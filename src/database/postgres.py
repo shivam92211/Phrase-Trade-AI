@@ -9,21 +9,21 @@ def get_db_connection():
 
     # Check if the required environment variables are set
     if (
-        not env.POSTGRES_USER
-        or not env.POSTGRES_PASSWORD
-        or not env.POSTGRES_DB
-        or not env.POSTGRES_PORT
-        or not env.POSTGRES_HOST
+        not env.PG_VECTOR_DB_USER
+        or not env.PG_VECTOR_DB_PASSWORD
+        or not env.PG_VECTOR_DB
+        or not env.PG_VECTOR_DB_PORT
+        or not env.PG_VECTOR_DB_HOST
     ):
         raise ValueError("One or more required DB environment variables are not set.")
 
     try:
         connection = psycopg2.connect(
-            user=env.POSTGRES_USER,
-            password=env.POSTGRES_PASSWORD,
-            dbname=env.POSTGRES_DB,
-            port=env.POSTGRES_PORT,
-            host=env.POSTGRES_HOST,
+            user=env.PG_VECTOR_DB_USER,
+            password=env.PG_VECTOR_DB_PASSWORD,
+            dbname=env.PG_VECTOR_DB,
+            port=env.PG_VECTOR_DB_PORT,
+            host=env.PG_VECTOR_DB_HOST,
         )
         return connection
 
